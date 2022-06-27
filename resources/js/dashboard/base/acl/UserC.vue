@@ -17,7 +17,20 @@
             <div v-show="formView">
                 <div class="row justify-content-center">
                     <div class="col-lg-5 col-md-6 col-sm-8 col-xs-12">
-                        <form class="form-horizontal" v-on:submit.prevent="onSubmit">
+                        <!--                        <div v-if="errors"
+                                                     class="bg-red-500  py-2 px-4 pr-0 rounded font-bold mb-4 shadow-lg">
+
+                                                    <div v-for="(v, k) in errors" :key="k">
+
+                                                        <p v-for="error in v" :key="error" class="text-sm">
+
+                                                            {{ error }}
+
+                                                        </p>
+
+                                                    </div>
+                                                </div>-->
+                        <Form class="form-horizontal" @submit="onSubmit">
                             <div class="form-group row justify-content-center">
                                 <h6 class="text-left col-sm-12">
                                     <strong v-if="createView">Add New User</strong>
@@ -35,145 +48,28 @@
                                           <i class="fa fa-file-text-o"></i>
                                         </span>
                                     </div>
-                                    <input v-model="formData.name" v-validate="'required|min:2|max:50'"
-                                           :class="[(vvErrors.has('name') ? 'is-invalid' : '')]"
-                                           class="form-control form-control-sm rounded-0"
-                                           data-vv-as="name" data-vv-name="name" placeholder="name"
-                                           type="text">
-                                    <div v-show="vvErrors.has('name')" class="invalid-feedback">
-                                        {{ vvErrors.first('name') }}
-                                    </div>
+                                    <Field name="name" class="form-control form-control-sm rounded-0"
+                                           v-model="formData.name" rules="alpha"
+                                           placeholder="name" type="text"/>
+                                    <span>{{ errors.name }}</span>
+                                    <ErrorMessage name="name"/>
                                 </div>
                             </div>
+
                             <div class="form-group">
-                                <label class="czm-xs">Office Id<span class="text-danger">*</span></label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      <i class="fa fa-file-text-o"></i>
-                    </span>
-                                    </div>
-                                    <input v-model.number="formData.office_id"
-                                           v-validate="'required|numeric|min:3|max:50'"
-                                           :class="[(vvErrors.has('office_id') ? 'is-invalid' : '')]"
-                                           class="form-control form-control-sm rounded-0"
-                                           data-vv-as="office id" data-vv-name="office_id"
-                                           placeholder="office id" type="text">
-                                    <div v-show="vvErrors.has('office_id')" class="invalid-feedback">
-                                        {{ vvErrors.first('office_id') }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="czm-xs">Email<span class="text-danger">*</span></label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      <i class="fa fa-file-text-o"></i>
-                    </span>
-                                    </div>
-                                    <input v-model="formData.email" v-validate="'required|email|min:8|max:50'"
-                                           :class="[(vvErrors.has('email') ? 'is-invalid' : '')]"
-                                           class="form-control form-control-sm rounded-0"
-                                           data-vv-as="email" data-vv-name="email"
-                                           placeholder="email" type="text">
-                                    <div v-show="vvErrors.has('email')" class="invalid-feedback">
-                                        {{ vvErrors.first('email') }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="czm-xs">Mobile</label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text">+880</span>
-                                    </div>
-                                    <input v-model="formData.mobile" v-validate="'numeric|mobile'"
-                                           :class="[(vvErrors.has('mobile') ? 'is-invalid' : '')]"
-                                           class="form-control form-control-sm rounded-0"
-                                           data-vv-as="mobile" data-vv-name="mobile"
-                                           placeholder="mobile" type="text">
-                                    <div v-show="vvErrors.has('mobile')" class="invalid-feedback">
-                                        {{ vvErrors.first('mobile') }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="czm-xs">Status<span class="text-danger">*</span></label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      <i class="fa fa-arrow-circle-down"></i>
-                    </span>
-                                    </div>
-                                    <select v-model="formData.status" v-validate="'required'"
-                                            :class="[(vvErrors.has('status') ? 'is-invalid' : '')]"
-                                            class="form-control form-control-sm rounded-0" data-vv-as="status"
-                                            data-vv-name="status"
-                                            data-vv-validate-on="change">
-                                        <option value="">Select One</option>
-                                        <option v-for="item in statuses" :key='item' :value="item">
-                                            {{ item }}
-                                        </option>
-                                    </select>
-                                    <div v-show="vvErrors.has('status')" class="invalid-feedback">
-                                        {{ vvErrors.first('status') }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="czm-xs">Password<span v-if="createView"
-                                                                    class="text-danger">*</span></label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      <i class="nav-icon icon-lock"></i>
-                    </span>
-                                    </div>
-                                    <input ref='password' v-model="formData.password"
-                                           v-validate="'min:6|max:16'"
-                                           :class="[(vvErrors.has('password') ?'is-invalid': '')]"
-                                           autocomplete="off"
-                                           class="form-control form-control-sm rounded-0" data-vv-as="password"
-                                           data-vv-name="password" placeholder="password" type="password">
-                                    <div v-show="vvErrors.has('password')" class="invalid-feedback">
-                                        {{ vvErrors.first('password') }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="czm-xs">Confirm Password<span v-if="createView"
-                                                                            class="text-danger">*</span></label>
-                                <div class="input-group input-group-sm">
-                                    <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      <i class="nav-icon icon-lock"></i>
-                    </span>
-                                    </div>
-                                    <input v-model="formData.password_confirmation"
-                                           v-validate="'confirmed:password|min:6|max:16'"
-                                           :class="[(vvErrors.has('password_confirmation') ? 'is-invalid': '')]"
-                                           autocomplete="off"
-                                           class="form-control form-control-sm rounded-0"
-                                           data-vv-as="confirm password" data-vv-name="password_confirmation"
-                                           placeholder="confirm password" type="password">
-                                    <div v-show="vvErrors.has('password_confirmation')" class="invalid-feedback">
-                                        {{ vvErrors.first('password_confirmation') }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <button v-if="createView" class="btn btn-sm btn-primary pull-right rounded-0"
+                                <button v-if="createView" :disabled="isSubmitting"
+                                        class="btn btn-sm btn-primary pull-right rounded-0"
                                         type="submit">
                                     <i class="fa fa-dot-circle-o"></i>
                                     Submit
                                 </button>
-                                <button v-else class="btn btn-sm btn-primary pull-right rounded-0" type="submit">
+                                <button v-else class="btn btn-sm btn-primary pull-right rounded-0"
+                                        :disabled="isSubmitting" type="submit">
                                     <i class="fa fa-dot-circle-o"></i>
                                     Update
                                 </button>
                             </div>
-                        </form>
+                        </Form>
                     </div>
                 </div>
             </div>
@@ -341,12 +237,19 @@
 </template>
 
 <script>
+import {Field, Form, ErrorMessage, useForm} from 'vee-validate';
 import pagination from "../../Pagination.vue";
 import queryString from "query-string";
+import {toString} from "lodash";
 
 export default {
     name: "UserC.vue",
-    // components: {pagination},
+    components: {
+        pagination,
+        Field,
+        Form,
+        ErrorMessage,
+    },
     data() {
         return {
             loading: false,
@@ -379,7 +282,40 @@ export default {
             routes: window.appHelper.routes,
         };
     },
+
     methods: {
+        onNewAdd() {
+            const {setErrors, isSubmitting, setFieldError} = useForm();
+
+            let _this = this;
+            // _this.loading = true;
+
+            axios.post(_this.routes.one, _this.formData).then((res) => {
+                if (res.data.success) {
+                    toastr.success(res.data.success, "Success");
+                    _this.getAll();
+                } else {
+                    toastr.error(res.data.message, "Warning");
+                }
+                _this.loading = false;
+            }).catch((error) => {
+                // console.log(error.response.data.errors.name.toString());
+                // this.errors = error.response.data.errors
+                if (error.response) {
+                    toastr.error(error.response.data.message, "Error");
+                    if (error.response && error.response.data.errors) {
+                        setErrors(error.response.data);
+                        /*_this.$setErrorsFromLaravel(
+                            error.response.data
+                        );*/
+                    }
+                } else {
+                    toastr.error(error.message, "Error");
+                }
+                _this.loading = false;
+            });
+        },
+
         paginationClicked(page) {
             this.updateQueryParams("page", page);
             this.search.page = page;
@@ -444,7 +380,8 @@ export default {
                 if (error.response) {
                     toastr.error(error.response.data.message, "Error");
                     if (error.response && error.response.data.errors) {
-                        _this.$setErrorsFromLaravel(error.response.data);
+                        _this.setErrors(error.response.data);
+                        // _this.$setErrorsFromLaravel(error.response.data);
                     }
                 } else {
                     toastr.error(error.message, "Error");
@@ -454,39 +391,50 @@ export default {
         },
         onSubmit() {
             let _this = this;
-            _this.$validator.validateAll().then((result) => {
-                if (result && _this.createView) {
-                    _this.onNewAdd();
-                } else if (result && !_this.createView) {
-                    _this.onUpdate();
-                }
-            });
+            _this.onNewAdd();
+            console.log('new');
+            /*
+                 _this.$validator.validateAll().then((result) => {
+                            if (result && _this.createView) {
+                                _this.onNewAdd();
+                            } else if (result && !_this.createView) {
+                                _this.onUpdate();
+                            }
+                        });*/
         },
-        onNewAdd() {
-            let _this = this;
-            _this.loading = true;
-            axios.post(_this.routes.one, _this.formData).then((res) => {
-                if (res.data.success) {
-                    toastr.success(res.data.success, "Success");
-                    _this.getAll();
-                } else {
-                    toastr.error(res.data.message, "Warning");
-                }
-                _this.loading = false;
-            }).catch((error) => {
-                if (error.response) {
-                    toastr.error(error.response.data.message, "Error");
-                    if (error.response && error.response.data.errors) {
-                        _this.$setErrorsFromLaravel(
-                            error.response.data
-                        );
-                    }
-                } else {
-                    toastr.error(error.message, "Error");
-                }
-                _this.loading = false;
-            });
-        },
+        /*  onNewAdd() {
+              const {setErrors, isSubmitting, setFieldError} = useForm();
+
+              let _this = this;
+              _this.loading = true;
+
+              axios.post(_this.routes.one, _this.formData).then((res) => {
+                  if (res.data.success) {
+                      toastr.success(res.data.success, "Success");
+                      _this.getAll();
+                  } else {
+                      toastr.error(res.data.message, "Warning");
+                  }
+                  _this.loading = false;
+              }).catch((error) => {
+                  // console.log(error.response.data.errors.name.toString());
+                  // this.errors = error.response.data.errors
+                  if (error.response) {
+                      toastr.error(error.response.data.message, "Error");
+                      if (error.response && error.response.data.errors) {
+                          console.log(error.response.data.errors);
+
+                          console.log(setErrors(error.response.data.errors));
+                          /!*_this.$setErrorsFromLaravel(
+                              error.response.data
+                          );*!/
+                      }
+                  } else {
+                      toastr.error(error.message, "Error");
+                  }
+                  _this.loading = false;
+              });
+          },*/
         addNew() {
             let _this = this;
             _this.formView = true;
@@ -494,7 +442,7 @@ export default {
             _this.formData = {};
             _this.formData.status = "";
             _this.errors = {};
-            this.$validator.reset();
+            // this.$validator.reset();
         },
         onClickView(id) {
             let _this = this;
@@ -512,7 +460,7 @@ export default {
                 if (error.response) {
                     toastr.error(error.response.data.message, "Error");
                     if (error.response && error.response.data.errors) {
-                        _this.$setErrorsFromLaravel(error.response.data);
+                        // _this.$setErrorsFromLaravel(error.response.data);
                     }
                 } else {
                     toastr.error(error.message, "Error");
@@ -523,7 +471,7 @@ export default {
         onClickEdit(id) {
             let _this = this;
             _this.loading = true;
-            _this.$validator.reset();
+            // _this.$validator.reset();
             _this.errors = {};
             axios.patch(_this.routes.one + "/" + id).then((res) => {
                 if (res.data) {
@@ -538,7 +486,7 @@ export default {
                 if (error.response) {
                     toastr.error(error.response.data.message, "Error");
                     if (error.response && error.response.data.errors) {
-                        _this.$setErrorsFromLaravel(error.response.data);
+                        // _this.$setErrorsFromLaravel(error.response.data);
                     }
                 } else {
                     toastr.error(error.message, "Error");
@@ -561,7 +509,7 @@ export default {
                 if (error.response) {
                     toastr.error(error.response.data.message, "Error");
                     if (error.response && error.response.data.errors) {
-                        _this.$setErrorsFromLaravel(error.response.data);
+                        // _this.$setErrorsFromLaravel(error.response.data);
                     }
                 } else {
                     toastr.error(error.message, "Error");

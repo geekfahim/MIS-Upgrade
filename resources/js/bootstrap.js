@@ -1,8 +1,23 @@
 import {createApp} from 'vue';
+
 // import VeeValidate, {Validator} from "vee-validate";
+/*import {Field, Form, ErrorMessage} from 'vee-validate';
 
-import * as Validate from 'vee-validate';
+createApp({
+    pagination,
+    Field,
+    Form,
+    ErrorMessage,
+}).mount('#app');*/
 
+
+import {defineRule} from 'vee-validate';
+import AllRules from '@vee-validate/rules';
+import pagination from "./dashboard/Pagination";
+
+Object.keys(AllRules).forEach(rule => {
+    defineRule(rule, AllRules[rule]);
+});
 
 // window._ = require('lodash');
 // window.moment = require("moment");
@@ -87,7 +102,6 @@ if (token) {
         };
     }
 };*/
-const app = createApp({});
 
 /*const proto = function (id, obj) {
     if (!id || !obj) return '';
@@ -96,7 +110,6 @@ const app = createApp({});
 }
 app.provide(proto);*/
 
-Vue.component('ValidationProvider', ValidationProvider);// app.use(VeeValidateLaravel);
 
 // Vue.use(paginatePlugin);
 
